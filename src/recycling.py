@@ -1,9 +1,5 @@
-import numpy as np
 from rich.progress import track
 from enums import *
-from rewarder import Rewarder
-from state_updater import StateUpdater
-from robot import Robot
 
 class Recycling:
     def __init__(self, state_updater, robot, num_runs_per_epoch=1000) -> None:
@@ -12,10 +8,10 @@ class Recycling:
         self.training_counter = 0
         self.__num_runs_per_epoch = num_runs_per_epoch
 
-        with open("rewards.txt", "a") as f:
+        with open("data/rewards.txt", "w") as f:
             f.write(f"training,epoch,total_reward\n")
 
-        with open("optimal_policy.txt", "a") as f:
+        with open("data/optimal_policy.txt", "w") as f:
             f.write(f"training,low_recharge,low_search,low_wait,high_search,high_wait\n")
         
 
@@ -27,7 +23,7 @@ class Recycling:
             self.robot.update_state(new_state)
             total_reward += reward
         self.robot.update_policy(total_reward) # Robot receives a list of dictionaries {'action': action, 'reward': reward}
-        with open("rewards.txt", "a") as f:
+        with open("data/rewards.txt", "a") as f:
             f.write(f"{self.training_counter},{epoch_index},{total_reward}\n")
     
     def run_training(self, epochs):
@@ -37,7 +33,7 @@ class Recycling:
     def run_multiple_training(self, num_train, epochs):
         for _ in track(range(num_train), description='Running Multiple Training'):
             self.run_training(epochs)
-            with open("optimal_policy.txt", "a") as f:
+            with open("data/optimal_policy.txt", "a") as f:
                 f.write(f"{self.training_counter},\
                         {self.robot.q_table[RobotStates.HIGH[LowActions.RECHARGE]]},\
                         {self.robot.q_table[RobotStates.HIGH[LowActions.SEARCH]]},\
