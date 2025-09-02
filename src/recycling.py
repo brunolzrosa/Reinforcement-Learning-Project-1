@@ -1,8 +1,5 @@
 from rich.progress import track
-from enums import *
-from rewarder import Rewarder
-from state_updater import StateUpdater
-from robot import Robot
+from src.enums import *
 import os
 
 class Recycling:
@@ -17,10 +14,10 @@ class Recycling:
         self.rewards_path = os.path.join(self.data_dir, "rewards.txt")
         self.policy_path = os.path.join(self.data_dir, "optimal_policy.txt")
 
-        with open(self.rewards_path, "a") as f:
+        with open(self.rewards_path, "w") as f:
             f.write(f"training,epoch,total_reward\n")
 
-        with open(self.policy_path, "a") as f:
+        with open(self.policy_path, "w") as f:
             f.write(f"training,low_recharge,low_search,low_wait,high_search,high_wait\n")
 
     def run_epoch(self, epoch_index) -> None:
@@ -31,21 +28,23 @@ class Recycling:
             self.robot.update_state(new_state)
             total_reward += reward
         self.robot.update_policy(total_reward) # Robot receives a list of dictionaries {'action': action, 'reward': reward}
+        self.robot.end_of_epoch_update()
         with open(self.rewards_path, "a") as f:
             f.write(f"{self.training_counter},{epoch_index},{total_reward}\n")
     
     def run_training(self, epochs):
         for i in track(range(epochs), description=f'Running Training {self.training_counter}'):
             self.run_epoch(i)
+        self.training_counter+=1
 
     def run_multiple_training(self, num_train, epochs):
         for _ in track(range(num_train), description='Running Multiple Training'):
             self.run_training(epochs)
             with open(self.policy_path, "a") as f:
                 f.write(f"{self.training_counter},\
-                        {self.robot.q_table[RobotStates.HIGH[LowActions.RECHARGE]]},\
-                        {self.robot.q_table[RobotStates.HIGH[LowActions.SEARCH]]},\
-                        {self.robot.q_table[RobotStates.LOW[LowActions.WAIT]]},\
-                        {self.robot.q_table[RobotStates.LOW[LowActions.SEARCH]]},\
-                        {self.robot.q_table[RobotStates.LOW[LowActions.WAIT]]}\n")
-            self.robot.restart()
+                        {self.robot.estimations[RobotStates.LOW][LowActions.RECHARGE]},\
+                        {self.robot.estimations[RobotStates.LOW][LowActions.SEARCH]},\
+                        {self.robot.estimations[RobotStates.LOW][LowActions.WAIT]},\
+                        {self.robot.estimations[RobotStates.HIGH][HighActions.SEARCH]},\
+                        {self.robot.estimations[RobotStates.HIGH][HighActions.WAIT]}\n")
+            self.robot.reset()

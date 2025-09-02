@@ -1,6 +1,6 @@
 import numpy as np
-from enums import *
-from rewarder import Rewarder
+from src.enums import *
+from src.rewarder import Rewarder
 
 class StateUpdater:
     def __init__(self, high_to_low_prob, deplete_prob, rewarder: Rewarder) -> None:
@@ -40,9 +40,9 @@ class StateUpdater:
                 return (RobotStates.HIGH, self.rewarder.r_wait)
 
             case LowActions.SEARCH:
-                if param < self.deplete_prob:
-                    return (RobotStates.LOW, self.rewarder.r_search)
-                return (RobotStates.HIGH, -3)
+                if param < self.deplete_prob:        
+                    return (RobotStates.HIGH, -3)    
+                return (RobotStates.LOW, self.rewarder.r_search)
             
             case LowActions.WAIT:
                 return (RobotStates.LOW, self.rewarder.r_wait)

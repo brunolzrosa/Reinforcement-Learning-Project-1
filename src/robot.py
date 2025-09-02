@@ -1,128 +1,88 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-# from rich import print
-import enum
-from enums import *
-from recycling import Recycling
-from rewarder import Rewarder
-from state_updater import StateUpdater
+from src.enums import *
+from rich.progress import track
 
 class Robot:
-    def __init__(self, state_updater: StateUpdater) -> None:
-        """
-        Inicializa o Robô Agente.
-        """
-        self.state = RobotStates.HIGH   
-        self.state_updater = state_updater
-        self.total_reward = 0
-        self.step_count = 0
-        
-        # A tabela Q armazena os valores das ações em cada estado.
-        # Inicializar com 0.0 é uma prática comum.
-        self.q_table = {
-            RobotStates.HIGH: {
-                HighActions.SEARCH: 0.0,
-                HighActions.WAIT: 0.0
-            },
-            RobotStates.LOW: {
-                LowActions.SEARCH: 0.0,
-                LowActions.WAIT: 0.0,
-                LowActions.RECHARGE: 0.0
-            }
-        }
-        
-        # Parâmetros do algoritmo de Q-learning
+    def __init__(self) -> None:
+        self.state = RobotStates.HIGH
+        self.estimations = self.__initial_estimations()
         self.epsilon = 0.1          # Taxa de exploração (exploration rate)
         self.learning_rate = 0.1    # Taxa de aprendizado (alpha)
-        self.discount_factor = 0.9  # Fator de desconto (gamma)
-        
-        # Armazena a última ação tomada para a atualização do TD
-        self.last_action = None
+        self.gamma = 0.9
+        self.states = [self.state]
+        self.actions = []
+        self.greedy = []
+
+    
+    def __initial_estimations(self):
+        return {
+            RobotStates.HIGH: {
+                HighActions.SEARCH: 0.01,
+                HighActions.WAIT: 0.01
+            },
+            RobotStates.LOW: {
+                LowActions.SEARCH: 0.01,
+                LowActions.WAIT: 0.01,
+                LowActions.RECHARGE: 0.01
+            }
+        }
 
     def act(self):
-        """
-        Decide a próxima ação usando uma política epsilon-greedy.
-        """
         # Exploração: escolhe uma ação aleatória com probabilidade epsilon
         if np.random.rand() <= self.epsilon:
             if self.state == RobotStates.HIGH:
-                action = np.random.choice(list(HighActions))
+                action = (np.random.choice(list(HighActions)), False)
             else:
-                action = np.random.choice(list(LowActions))
+                action = (np.random.choice(list(LowActions)), False)
         # Explotação: escolhe a melhor ação conhecida com base na tabela Q
         else:
             if self.state == RobotStates.HIGH:
-                action = max(self.q_table[RobotStates.HIGH], key=self.q_table[RobotStates.HIGH].get)
+                action = (max(self.estimations[RobotStates.HIGH], key=self.estimations[RobotStates.HIGH].get), True)
             else:
-                action = max(self.q_table[RobotStates.LOW], key=self.q_table[RobotStates.LOW].get)
+                action = (max(self.estimations[RobotStates.LOW], key=self.estimations[RobotStates.LOW].get), True)
         
-        self.last_action = action  # Guarda a ação tomada para o aprendizado
-        return action
-    
-    def update_q_value(self, reward: float, new_state: RobotStates):
-        """
-        Atualiza o valor Q para o par estado-ação anterior usando a regra de atualização TD(0).
-        """
-        # A atualização só ocorre se uma ação já tiver sido tomada.
-        if self.last_action is not None:
-            # Obtém o valor Q do par estado-ação que acabou de ocorrer (s, a)
-            current_q = self._get_q_value(self.state, self.last_action)
-            
-            # Obtém o valor máximo de Q para o novo estado (s')
-            next_max_q = self._get_max_q_value(new_state)
-            
-            # Calcula o "alvo" do TD: R + γ * max_a'(Q(s', a'))
-            td_target = reward + self.discount_factor * next_max_q
-            
-            # Calcula o erro do TD: (Alvo TD) - Q(s, a)
-            td_error = td_target - current_q
-            
-            # Atualiza o valor Q usando a taxa de aprendizado: Q(s, a) <- Q(s, a) + α * [erro TD]
-            new_q = current_q + self.learning_rate * td_error
-            self._set_q_value(self.state, self.last_action, new_q)
+        self.actions.append(action[0])  # Guarda a ação tomada para o aprendizado
+        self.greedy.append(action[1])
+        return action[0]
 
-        # Transita para o novo estado para a próxima iteração
+    def update_state(self, new_state):
         self.state = new_state
-        self.total_reward += reward
-        self.step_count += 1
+        self.states.append(new_state)
+
     
-    def end_of_epoch(self):
-        """
-        Procedimentos de final de época, como a diminuição do epsilon.
-        """
-        # Diminui a taxa de exploração (epsilon) ao longo do tempo
+    def update_policy(self, total_reward):
+        if self.actions:
+            last_action_index = len(self.actions) - 1
+            
+            if self.greedy[last_action_index]:
+                last_state = self.states[last_action_index]
+                last_action = self.actions[last_action_index]
+
+                td_error_end = total_reward - self.estimations[last_state][last_action]
+                self.estimations[last_state][last_action] += self.learning_rate * td_error_end
+
+        for i in track(reversed(range(len(self.actions)-1)), "Updating Robot Policy"):
+            if self.greedy[i]:
+                current_state = self.states[i]
+                current_action = self.actions[i]
+
+                next_state = self.states[i+1]
+                next_action = self.actions[i+1]
+
+                immediate_reward = 0
+                td_target = immediate_reward + self.gamma * self.estimations[next_state][next_action]
+                td_error = td_target - self.estimations[current_state][current_action]
+
+                self.estimations[current_state][current_action] += self.learning_rate * td_error
+
+    def end_of_epoch_update(self):
         self.epsilon = max(0.01, self.epsilon * 0.99)
-        
-    def restart(self):
-        """
-        Reinicia o estado do robô para uma nova série de treinamento.
-        """
+
+    def reset(self):
         self.state = RobotStates.HIGH
-        self.total_reward = 0
-        self.step_count = 0
-        self.last_action = None
-        self.q_table = {
-            RobotStates.HIGH: {
-                HighActions.SEARCH: 0.0,
-                HighActions.WAIT: 0.0
-            },
-            RobotStates.LOW: {
-                LowActions.SEARCH: 0.0,
-                LowActions.WAIT: 0.0,
-                LowActions.RECHARGE: 0.0
-            }
-        }
-        
-    def _get_q_value(self, state: RobotStates, action) -> float:
-        """Retorna o valor Q para um dado estado e ação."""
-        return self.q_table[state][action]
-    
-    def _set_q_value(self, state: RobotStates, action, value: float):
-        """Define o valor Q para um dado estado e ação."""
-        self.q_table[state][action] = value
-    
-    def _get_max_q_value(self, state: RobotStates) -> float:
-        """Encontra o valor Q máximo para um determinado estado."""
-        return max(self.q_table[state].values())
+        self.estimations = self.__initial_estimations()
+        self.epsilon = 0.1          # Taxa de exploração (exploration rate)
+        self.gamma = 0.9
+        self.actions = []
+        self.greedy = []
+        self.states = [self.state]
