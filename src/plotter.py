@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -9,6 +10,13 @@ REWARDS_FILE = os.path.join(DATA_DIR, 'rewards.txt')
 POLICY_FILE = os.path.join(DATA_DIR, 'optimal_policy.txt')
 
 def plot_rewards():
+    """
+    Reads the rewards data from rewards.txt and plots the learning curve.
+    
+    The plot shows the average total reward per epoch across multiple training
+    runs, with the standard deviation shown as an error band.
+    """
+    
     try:
         df = pd.read_csv(REWARDS_FILE)
     except FileExistsError:
@@ -30,10 +38,15 @@ def plot_rewards():
 
 
 def plot_policy_heatmap():
+    """
+    Reads the final learned policy from optimal_policy.txt and visualizes it
+    as a heatmap, showing the final Q-values for each state-action pair.
+    """
+        
     try:
         df = pd.read_csv(POLICY_FILE)
     except FileExistsError:
-        print(f"Policy file not found at: {REWARDS_FILE}")
+        print(f"Policy file not found at: {POLICY_FILE}")
         return
     
     finally_policy = df.iloc[-1]
@@ -41,7 +54,7 @@ def plot_policy_heatmap():
     policy_matrix = pd.DataFrame({
         'Search': [finally_policy['high_search'], finally_policy['low_search']],
         'Wait': [finally_policy['high_wait'], finally_policy['low_wait']],
-        'Recharge': [finally_policy['high_recharge'], finally_policy['low_recharge']],
+        'Recharge': [np.nan, finally_policy['low_recharge']], # Can't recharge while HIGH
     }, index=['High', 'Low'])
 
     plt.figure(figsize=(8,5))
