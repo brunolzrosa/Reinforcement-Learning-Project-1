@@ -3,6 +3,8 @@ from src.enums import *
 import os
 
 class Recycling:
+    """ Class that manages the training process
+    """
     def __init__(self, state_updater, robot, num_runs_per_epoch=1000) -> None:
         self.state_updater = state_updater
         self.robot = robot
@@ -21,6 +23,15 @@ class Recycling:
             f.write(f"training,low_recharge,low_search,low_wait,high_search,high_wait\n")
 
     def run_epoch(self, epoch_index) -> None:
+        """
+        Execute a single training epoch consisting of multiple simulation steps.
+        
+        During each epoch, the robot performs actions, receives rewards, and updates
+        its policy. Total reward for the epoch is recorded to file.
+        
+        Args:
+            epoch_index: The current epoch number for progress tracking
+        """
         total_reward = 0
         for _ in track(range(self.__num_runs_per_epoch), description=f'Epoch {epoch_index}'):
             action = self.robot.act()
