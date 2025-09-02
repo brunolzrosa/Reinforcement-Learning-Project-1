@@ -3,9 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../data/')
 PLOTS_DIR = os.path.join(os.path.dirname(__file__), '../data/plots')
-REWARDS_FILE = os.path.join(PLOTS_DIR, 'rewards.txt')
-POLICY_FILE = os.path.join(PLOTS_DIR, 'optimal_policy.txt')
+REWARDS_FILE = os.path.join(DATA_DIR, 'rewards.txt')
+POLICY_FILE = os.path.join(DATA_DIR, 'optimal_policy.txt')
 
 def plot_rewards():
     try:
