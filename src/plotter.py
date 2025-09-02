@@ -3,9 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-PlOTS_DIR = os.path.join(os.path.dirname(__file__), '../data/plots')
-REWARDS_FILE = os.path.join(PlOTS_DIR, 'rewards.txt')
-POLICY_FILE = os.path.join(PlOTS_DIR, 'optimal_policy.txt')
+DATA_DIR = os.path.join(os.path.dirname(__file__), '../data/')
+PLOTS_DIR = os.path.join(os.path.dirname(__file__), '../data/plots')
+REWARDS_FILE = os.path.join(DATA_DIR, 'rewards.txt')
+POLICY_FILE = os.path.join(DATA_DIR, 'optimal_policy.txt')
 
 def plot_rewards():
     try:
@@ -50,13 +51,13 @@ def plot_policy_heatmap():
     plt.xlabel('Action')
     plt.ylabel('Battery Status')
 
-    output_path = os.path.join(PlOTS_DIR, 'policy_heatmap.png')
+    output_path = os.path.join(PLOTS_DIR, 'policy_heatmap.png')
     plt.savefig(output_path)
     print(f"Policy heatmap saved in: {output_path}")
     plt.show()
 
 if __name__ == '__main__':
-    if not os.path.exists(PlOTS_DIR):
+    if not os.path.exists(PLOTS_DIR):
         os.makedirs(PLOTS_DIR)
     
     plot_rewards()
