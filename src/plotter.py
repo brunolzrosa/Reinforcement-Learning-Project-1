@@ -1,4 +1,5 @@
 import os
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -26,7 +27,7 @@ def plot_rewards():
     output_path = os.path.join(PLOTS_DIR, 'reward_plot.png')
     plt.savefig(output_path)
     print(f"Rewards graphic saved in: {output_path}")
-    plt.show()
+    # plt.show()
 
 
 def plot_policy_heatmap():
@@ -41,11 +42,11 @@ def plot_policy_heatmap():
     policy_matrix = pd.DataFrame({
         'Search': [finally_policy['high_search'], finally_policy['low_search']],
         'Wait': [finally_policy['high_wait'], finally_policy['low_wait']],
-        'Recharge': [finally_policy['high_recharge'], finally_policy['low_recharge']],
+        'Recharge': [np.nan, finally_policy['low_recharge']],
     }, index=['High', 'Low'])
 
     plt.figure(figsize=(8,5))
-    sns.heatmap(policy_matrix, annot=True, cmap='viridis', fmt='.2f')
+    sns.heatmap(policy_matrix, annot=True, cmap='coolwarm_r')
 
     plt.title('Optimal policy - Final Q values')
     plt.xlabel('Action')
@@ -54,7 +55,7 @@ def plot_policy_heatmap():
     output_path = os.path.join(PLOTS_DIR, 'policy_heatmap.png')
     plt.savefig(output_path)
     print(f"Policy heatmap saved in: {output_path}")
-    plt.show()
+    # plt.show()
 
 if __name__ == '__main__':
     if not os.path.exists(PLOTS_DIR):

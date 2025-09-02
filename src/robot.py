@@ -3,16 +3,11 @@ from src.enums import *
 from rich.progress import track
 
 class Robot:
-    def __init__(self) -> None:
-        self.state = RobotStates.HIGH
-        self.estimations = self.__initial_estimations()
-        self.epsilon = 0.1          # Taxa de exploração (exploration rate)
-        self.learning_rate = 0.1    # Taxa de aprendizado (alpha)
-        self.gamma = 0.9
-        self.states = [self.state]
-        self.actions = []
-        self.greedy = []
-
+    def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
+        self.learning_rate = alpha      # Taxa de aprendizado (alpha)
+        self.initial_gamma = gamma
+        self.initial_epsilon = epsilon  # Taxa de exploração (exploration rate)
+        self.reset()
     
     def __initial_estimations(self):
         return {
@@ -81,8 +76,8 @@ class Robot:
     def reset(self):
         self.state = RobotStates.HIGH
         self.estimations = self.__initial_estimations()
-        self.epsilon = 0.1          # Taxa de exploração (exploration rate)
-        self.gamma = 0.9
+        self.epsilon = self.initial_epsilon          # Taxa de exploração (exploration rate)
+        self.gamma = self.initial_gamma
         self.actions = []
         self.greedy = []
         self.states = [self.state]
