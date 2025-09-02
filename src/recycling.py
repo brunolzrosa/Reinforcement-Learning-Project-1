@@ -22,7 +22,7 @@ class Recycling:
 
     def run_epoch(self, epoch_index) -> None:
         total_reward = 0
-        for _ in track(range(self.__num_runs_per_epoch), description=f'Epoch {epoch_index}'):
+        for _ in range(self.__num_runs_per_epoch):
             action = self.robot.act()
             new_state, reward = self.state_updater.get_new_state_and_reward(action)
             self.robot.update_state(new_state)

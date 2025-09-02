@@ -61,7 +61,7 @@ class Robot:
                 td_error_end = total_reward - self.estimations[last_state][last_action]
                 self.estimations[last_state][last_action] += self.learning_rate * td_error_end
 
-        for i in track(reversed(range(len(self.actions)-1)), "Updating Robot Policy"):
+        for i in reversed(range(len(self.actions)-1)):
             if self.greedy[i]:
                 current_state = self.states[i]
                 current_action = self.actions[i]

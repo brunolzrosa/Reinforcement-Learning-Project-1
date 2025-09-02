@@ -42,6 +42,21 @@ Activate the virtual environment with:
   venv\Scripts\activate
   ```
 
+#### Step 1.35 - Enabling Execution
+
+If your **Windows** is not letting you execute the activation, use the folowwing command:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+Then press `Y`.
+
+If your **Linux** is not letting you execute the activation, then add the permission with:
+```bash
+chmod +x venv/bin/activate
+```
+
+Now you should be able to activate the virtual environment.
+
 #### Step 1.4 – Install Dependencies
 
 Install all project dependencies by running:
