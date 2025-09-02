@@ -17,7 +17,7 @@ if __name__ == '__main__':
 
 	# Environment parameters
 	R_SEARCH = 0.5
-	R_WAIT = 0.2
+	R_WAIT = 0.5
 	HIGH_TO_LOW_PROB = 0.3
 	DEPLETE_PROB = 0.3
 

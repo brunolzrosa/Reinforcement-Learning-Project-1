@@ -27,7 +27,7 @@ def plot_rewards():
     output_path = os.path.join(PLOTS_DIR, 'reward_plot.png')
     plt.savefig(output_path)
     print(f"Rewards graphic saved in: {output_path}")
-    # plt.show()
+    plt.show()
 
 
 def plot_policy_heatmap():
@@ -55,7 +55,7 @@ def plot_policy_heatmap():
     output_path = os.path.join(PLOTS_DIR, 'policy_heatmap.png')
     plt.savefig(output_path)
     print(f"Policy heatmap saved in: {output_path}")
-    # plt.show()
+    plt.show()
 
 if __name__ == '__main__':
     if not os.path.exists(PLOTS_DIR):
