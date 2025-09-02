@@ -103,6 +103,17 @@ class Robot:
         self.total_reward = 0
         self.step_count = 0
         self.last_action = None
+        self.q_table = {
+            RobotStates.HIGH: {
+                HighActions.SEARCH: 0.0,
+                HighActions.WAIT: 0.0
+            },
+            RobotStates.LOW: {
+                LowActions.SEARCH: 0.0,
+                LowActions.WAIT: 0.0,
+                LowActions.RECHARGE: 0.0
+            }
+        }
         
     def _get_q_value(self, state: RobotStates, action) -> float:
         """Retorna o valor Q para um dado estado e ação."""
