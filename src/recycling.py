@@ -3,9 +3,21 @@ from src.enums import *
 import os
 
 class Recycling:
-    """ Class that manages the training process
+    """ Class that manages the training process of the Recycling Robot
+
+    This class orchestrates the simulation, running epochs and multiple training sessions,
+    and handles the logging of results like rewards and learned policies to text files.
+
     """
-    def __init__(self, state_updater, robot, num_runs_per_epoch=1000) -> None:
+    def __init__(self, state_updater, robot, num_runs_per_epoch: int=1000) -> None:
+        """
+        Initializes the training environment.
+
+        Args:
+            state_updater: An object that handles state transitions and rewards.
+            robot (Robot): The learning agent.
+            num_runs_per_epoch (int): The number of steps (actions) to run in each epoch.
+        """    
         self.state_updater = state_updater
         self.robot = robot
         self.training_counter = 0
@@ -24,7 +36,7 @@ class Recycling:
 
     def run_epoch(self, epoch_index) -> None:
         """
-        Execute a single training epoch consisting of multiple simulation steps.
+        Executes a single training epoch consisting of multiple simulation steps.
         
         During each epoch, the robot performs actions, receives rewards, and updates
         its policy. Total reward for the epoch is recorded to file.
@@ -44,11 +56,28 @@ class Recycling:
             f.write(f"{self.training_counter},{epoch_index},{total_reward}\n")
     
     def run_training(self, epochs):
+                """
+        Runs a full training session for a specified number of epochs.
+
+        Args:
+            epochs (int): The total number of epochs to run in this training session.
+        """
         for i in track(range(epochs), description=f'Running Training {self.training_counter}'):
             self.run_epoch(i)
         self.training_counter+=1
 
     def run_multiple_training(self, num_train, epochs):
+                """
+        Runs multiple independent training sessions.
+
+        This is useful for averaging results to get a smoother learning curve
+        and see how robust the learning process is.
+
+        Args:
+            num_train (int): The number of independent training sessions to run.
+            epochs (int): The number of epochs per training session.
+        """
+
         for _ in track(range(num_train), description='Running Multiple Training'):
             self.run_training(epochs)
             with open(self.policy_path, "a") as f:
