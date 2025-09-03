@@ -114,7 +114,7 @@ STEPS_PER_EPOCH = 1000
 ![Graphic total reward accumulated by epoch](../data/plots/reward_plot.png)
 ![Graphic opimal policy - Final Q values](../data/plots/policy_heatmap.png)
 
-With the heatman, we found that the robot prefers to wait if the battery is low, and search if the battery is high, but by a low margin.
+With the heatmap, we found that the robot prefers to wait if the battery is low, and search if the battery is high, but by a low margin.
 
 Also, we can easily see that the robot learned to maximize the reward by the first graph, in which the total reward is increasing with the training.
 
