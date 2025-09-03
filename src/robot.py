@@ -22,13 +22,13 @@ class Robot:
         
         return {
             RobotStates.HIGH: {
-                HighActions.SEARCH: 0.01,
-                HighActions.WAIT: 0.01
+                HighActions.SEARCH: 1e-6,
+                HighActions.WAIT: 1e-6
             },
             RobotStates.LOW: {
-                LowActions.SEARCH: 0.01,
-                LowActions.WAIT: 0.01,
-                LowActions.RECHARGE: 0.01
+                LowActions.SEARCH: 1e-6,
+                LowActions.WAIT: 1e-6,
+                LowActions.RECHARGE: 1e-6
             }
         }
 
