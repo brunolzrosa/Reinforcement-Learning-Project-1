@@ -1,7 +1,21 @@
 import numpy as np
 
 class Rewarder:
+    """"
+    Class that manages and validates the rewarding for the enviroment
+    """
     def __init__(self, r_search, r_wait) -> None:
+        """
+        Initializes the Rewarder with specified reward values.
+
+        Args:
+            r_search (float): The reward for the 'search' action.
+            r_wait (float): The reward for the 'wait' action.
+        
+        Raises:
+            ValueError: If the condition r_search > r_wait is not met.
+        """
+
         self._r_search, self._r_wait = -np.inf, -np.inf
         self.r_search = r_search
         self.r_wait = r_wait
