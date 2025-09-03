@@ -1,6 +1,5 @@
 import numpy as np
 from src.enums import *
-from rich.progress import track
 
 class Robot:
     """
@@ -10,16 +9,12 @@ class Robot:
     at the end of each epoch to update its policy estimations.
     """
 
-    def __init__(self) -> None:
+    def _init_(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
         """Initializes the robot agent."""
-        self.state = RobotStates.HIGH
-        self.estimations = self.__initial_estimations()
-        self.epsilon = 0.1          # Exploration rate 
-        self.learning_rate = 0.1    # alpha
-        self.gamma = 0.9            #discount factor
-        self.states = [self.state]
-        self.actions = []
-        self.greedy = []
+        self.learning_rate = alpha      # Taxa de aprendizado (alpha)
+        self.initial_gamma = gamma
+        self.initial_epsilon = epsilon  # Taxa de exploração (exploration rate)
+        self.reset()
 
     
     def __initial_estimations(self):
