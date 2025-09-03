@@ -11,9 +11,9 @@ class Robot:
 
     def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
         """Initializes the robot agent."""
-        self.learning_rate = alpha      # Taxa de aprendizado (alpha)
-        self.initial_gamma = gamma
-        self.initial_epsilon = epsilon  # Taxa de exploração (exploration rate)
+        self.learning_rate = alpha      # Learning rate
+        self.initial_gamma = gamma      # Discount rate
+        self.initial_epsilon = epsilon  # Exploration rate
         self.reset()
 
     
@@ -111,7 +111,7 @@ class Robot:
         
         self.state = RobotStates.HIGH
         self.estimations = self.__initial_estimations()
-        self.epsilon = self.initial_epsilon          # Taxa de exploração (exploration rate)
+        self.epsilon = self.initial_epsilon
         self.gamma = self.initial_gamma
         self.actions = []
         self.greedy = []
