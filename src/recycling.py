@@ -56,7 +56,7 @@ class Recycling:
             f.write(f"{self.training_counter},{epoch_index},{total_reward}\n")
     
     def run_training(self, epochs):
-                """
+        """
         Runs a full training session for a specified number of epochs.
 
         Args:
@@ -67,7 +67,7 @@ class Recycling:
         self.training_counter+=1
 
     def run_multiple_training(self, num_train, epochs):
-                """
+        """
         Runs multiple independent training sessions.
 
         This is useful for averaging results to get a smoother learning curve
