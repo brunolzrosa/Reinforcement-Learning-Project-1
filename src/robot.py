@@ -9,7 +9,7 @@ class Robot:
     at the end of each epoch to update its policy estimations.
     """
 
-    def _init_(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
+    def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
         """Initializes the robot agent."""
         self.learning_rate = alpha      # Taxa de aprendizado (alpha)
         self.initial_gamma = gamma
