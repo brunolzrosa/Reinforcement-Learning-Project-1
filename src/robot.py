@@ -83,7 +83,7 @@ class Robot:
             total_reward (float): The total reward accumulated during the entire epoch.
         """    
         if self.actions:
-                last_action_index = len(self.actions) - 1
+            last_action_index = len(self.actions) - 1
             
             if self.greedy[last_action_index]:
                 last_state = self.states[last_action_index]
