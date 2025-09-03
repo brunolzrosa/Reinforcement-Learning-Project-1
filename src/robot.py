@@ -10,12 +10,17 @@ class Robot:
     at the end of each epoch to update its policy estimations.
     """
 
-    def __init__(self, alpha=0.1, gamma=0.9, epsilon=0.1) -> None:
+    def __init__(self) -> None:
         """Initializes the robot agent."""
-        self.learning_rate = alpha      # Taxa de aprendizado (alpha)
-        self.initial_gamma = gamma
-        self.initial_epsilon = epsilon  # Taxa de exploração (exploration rate)
-        self.reset()
+        self.state = RobotStates.HIGH
+        self.estimations = self.__initial_estimations()
+        self.epsilon = 0.1          # Exploration rate 
+        self.learning_rate = 0.1    # alpha
+        self.gamma = 0.9            #discount factor
+        self.states = [self.state]
+        self.actions = []
+        self.greedy = []
+
     
     def __initial_estimations(self):
         """Helper method to create the initial Q-table with small default values."""
@@ -79,6 +84,7 @@ class Robot:
         """    
         if self.actions:
             last_action_index = len(self.actions) - 1
+            
             if self.greedy[last_action_index]:
                 last_state = self.states[last_action_index]
                 last_action = self.actions[last_action_index]
