@@ -20,7 +20,7 @@ The primary goal of this project is to implement and evaluate a Temporal Differe
 
 The simulation is based on the classic Recycling Robot problem. The robot operates in an environment defined by two states, determined by its battery level: High and Low. In any given state, the robot must decide between a set of actions: search for cans (high reward, high energy cost), wait for cans to be brought to it (low reward, low energy cost), or recharge its battery (no immediate reward, transitions from Low to High state).
 
-![Image demonstrating the proposed garbage collection robot problem](image.png)
+![Image demonstrating the proposed garbage collection robot problem](./images/proposed_problem.png)
 
 
 
